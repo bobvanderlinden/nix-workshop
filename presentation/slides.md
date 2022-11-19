@@ -703,29 +703,42 @@ $ docker run -it nix-workshop:XXX
 
 ## Packages
 
-[https://github.com/NixOS/nixpkgs pkgs/tools/audio/volumeicon/default.nix](https://github.com/NixOS/nixpkgs/blob/f42a45c015f28ac3beeb0df360e50cdbf495d44b/pkgs/tools/audio/volumeicon/default.nix)
+[https://github.com/NixOS/nixpkgs pkgs/tools/audio/volumeicon/default.nix](https://github.com/NixOS/nixpkgs/blob/3c5cc34fac30437567fb71882c19112fbde27bee/pkgs/tools/audio/volumeicon/default.nix)
 
-```nix [1|3|4-5|7-10|12-13|15-21]
-{ pkgs, fetchurl, lib, stdenv, gtk3, pkg-config, intltool, alsa-lib }:
+```nix [1-4|6|7-8|10-15|17-26|28-34]
+{ fetchFromGitHub, lib, stdenv
+, autoreconfHook, intltool, pkg-config
+, gtk3, alsa-lib
+}:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "volumeicon";
   version = "0.5.1";
 
-  src = fetchurl {
-    url = "http://softwarebakery.com/maato/files/volumeicon/volumeicon-0.5.1.tar.gz";
-    sha256 = "182xl2w8syv6ky2h2bc9imc6ap8pzh0p7rp63hh8nw0xm38c3f14";
+  src = fetchFromGitHub {
+    owner = "Maato";
+    repo = "volumeicon";
+    rev = version;
+    hash = "sha256-zYKC7rOoLf08rV4B43TrGNBcXfSBFxWZCe9bQD9JzaA";
   };
 
-  nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ gtk3 intltool alsa-lib ];
+  nativeBuildInputs = [
+    autoreconfHook
+    intltool
+    pkg-config
+  ];
+
+  buildInputs = [
+    gtk3
+    alsa-lib
+  ];
 
   meta = with lib; {
     description = "A lightweight volume control that sits in your systray";
-    homepage = "http://softwarebakery.com/maato/volumeicon.html";
-    platforms = pkgs.lib.platforms.linux;
+    homepage = "http://nullwise.com/volumeicon.html";
+    platforms = platforms.linux;
     maintainers = with maintainers; [ bobvanderlinden ];
-    license = pkgs.lib.licenses.gpl3;
+    license = licenses.gpl3;
   };
 }
 ```
