@@ -156,7 +156,7 @@ https://nix.dev/tutorials/install-nix
 
   ```sh
   sudo pacman -S nix
-  sudo usermod --groups nix-users $UID
+  sudo usermod --append --groups nix-users $USER
   ```
 
 * Debian
