@@ -21,6 +21,10 @@
       background: none !important;
       box-shadow: none !important;
     }
+
+		qrcode {
+			display: inline-block;
+		}
   </style>
 </head>
 
@@ -37,6 +41,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/markdown/markdown.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/plugin/highlight/highlight.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 	<script>
 		// More info about config & dependencies:
@@ -181,6 +186,14 @@
 		Reveal.addEventListener("ready", function addFragmentToLists() {
 			for (const listItem of document.querySelectorAll(".fragmented-lists li")) {
 				listItem.classList.add("fragment");
+			}
+
+			for (const preCode of document.querySelectorAll("pre > code")) {
+				preCode.setAttribute("data-trim", "");
+			}
+
+			for (const qrcode of document.querySelectorAll("qrcode")) {
+				new QRCode(qrcode, qrcode.getAttribute("href"))
 			}
 		});
 	</script>
