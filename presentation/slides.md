@@ -187,10 +187,18 @@ https://nix.dev/tutorials/install-nix
 
 ## Configure experimental features
 
-Add to `~/.config/nix/nix.conf` and `/etc/nix/nix.conf`
+Add to `~/.config/nix/nix.conf` and `/etc/nix/nix.conf`:
 
 ```text
 experimental-features = nix-command flakes
+```
+
+Commands:
+
+```console
+$ mkdir -p ~/.config/nix
+$ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+$ echo "experimental-features = nix-command flakes" | tee -a /etc/nix/nix.conf
 ```
 
 On Debian and Archlinux:
@@ -206,7 +214,7 @@ $ systemctl restart nix-daemon
 ```console [1-2|3-11]
 $ cowsay
 bash: cowsay: command not found
-$ nix run nixpkgs#cowsay -- hello
+$ nix run nixpkgs#cowsay hello
  _______ 
 < hello >
  ------- 
@@ -225,7 +233,7 @@ $ nix run nixpkgs#cowsay -- hello
 It is a full blown package manager...
 
 ```console
-$ nix run nixpkgs#firefox
+$ nix run nixpkgs#gimp
 ```
 
 ---
@@ -235,9 +243,9 @@ $ nix run nixpkgs#firefox
 It does not clutter your `/usr/bin`...
 
 ```console
-$ nix run nixpkgs#firefox
-$ firefox
-bash: firefox: command not found
+$ nix run nixpkgs#gimp
+$ gimp
+bash: gimp: command not found
 ```
 
 <div class="fragment">
@@ -245,7 +253,7 @@ bash: firefox: command not found
 It does clutter your `/nix/store`...
 
 ```console
-/nix/store/klwh0pr14pyam1l7nclr7nsq53ijbj98-firefox-107.0/bin/firefox
+/nix/store/6290pbazx8hfj0d6wihlpg71lzgybwkd-gimp-2.10.32/bin/gimp
 ```
 
 </div>
@@ -469,9 +477,9 @@ $ bundle exec rails server
 ## Nix as package manager <!-- .slide: class="fragmented-lists" -->
 
 ```console
-$ nix profile install nixpkgs#firefox
-$ firefox
-$ nix profile remove nixpkgs#firefox
+$ nix profile install nixpkgs#gimp
+$ gimp
+$ nix profile remove nixpkgs#gimp
 ```
 <!-- .element: class="fragment" -->
 
