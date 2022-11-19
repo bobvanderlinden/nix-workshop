@@ -351,8 +351,8 @@ v10.19.0
 ## Nix develop
 
 ```console
-$ mkdir ~/projects/myproject
-$ git init
+$ git init ~/projects/myproject
+$ cd $_
 $ nix flake init --template github:bobvanderlinden/templates#dev-shell
 ```
 
@@ -366,7 +366,7 @@ $ nix flake init --template github:bobvanderlinden/templates#dev-shell
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
   };
 
-  outputs = { self, nixpkgs, flake-utils }: {
+  outputs = { self, nixpkgs }: {
     devShell = nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "aarch64-darwin"
@@ -476,16 +476,27 @@ $ bundle exec rails server
 
 ## Nix as package manager <!-- .slide: class="fragmented-lists" -->
 
-```console
+```console [1|2|3-4|5-6|7|8|9-14]
 $ nix profile install nixpkgs#gimp
 $ gimp
-$ nix profile remove nixpkgs#gimp
+$ ls ~/.nix-profile/bin
+gimp
+$ nix profile list
+0 ... /nix/store/6290pbazx8hfj0d6wihlpg71lzgybwkd-gimp-2.10.32
+$ nix profile remove '.*gimp'
+$ nix profile rollback
+$ nix profile history
+Version 1 (2022-11-21):
+  flake:nixpkgs#...gimp: ∅ -> 2.10.32
+
+Version 2 (2022-11-21) <- 1:
+  flake:nixpkgs#...gimp: 2.10.32 -> ∅
 ```
 <!-- .element: class="fragment" -->
 
 * No root! ✨
 * Per-user profile 🎉
-* `~/.nix-profile/bin`
+* Rollbacks 👍
 * 'Globals' 👎
 
 ---
@@ -517,9 +528,10 @@ $ nix develop
 ...
 ```
 
-![](2022-11-18-17-46-06.png) <!-- .element: class="fragment" -->
-
-That's a lot of work! <!-- .element: class="fragment" -->
+<figure class="meme fragment">
+  <figcaption>That's a lotta work!</figcaption>
+  <img src="2022-11-18-17-46-06.png" >
+</figure>
 
 ---
 ## direnv
@@ -685,29 +697,65 @@ $ docker run -it nix-workshop:XXX
 
 ---
 
-# Neat: build and run freegish
-
-```console
-nix run github:freegish/freegish
-```
-
----
-
-## Neat: SBOM generation
-
-```console
-nix show-derivation --recursive | nix run github:sudo-bmitch/convert-nix-cyclonedx#
-```
-
----
-
 ## The end<span class="fragment">?</span>
 
 ---
 
-## Version not available
+## Packages
 
-```nix
+[https://github.com/NixOS/nixpkgs pkgs/tools/audio/volumeicon/default.nix](https://github.com/NixOS/nixpkgs/blob/f42a45c015f28ac3beeb0df360e50cdbf495d44b/pkgs/tools/audio/volumeicon/default.nix)
+
+```nix [1|3|4-5|7-10|12-13|15-21]
+{ pkgs, fetchurl, lib, stdenv, gtk3, pkg-config, intltool, alsa-lib }:
+
+stdenv.mkDerivation {
+  pname = "volumeicon";
+  version = "0.5.1";
+
+  src = fetchurl {
+    url = "http://softwarebakery.com/maato/files/volumeicon/volumeicon-0.5.1.tar.gz";
+    sha256 = "182xl2w8syv6ky2h2bc9imc6ap8pzh0p7rp63hh8nw0xm38c3f14";
+  };
+
+  nativeBuildInputs = [ pkg-config ];
+  buildInputs = [ gtk3 intltool alsa-lib ];
+
+  meta = with lib; {
+    description = "A lightweight volume control that sits in your systray";
+    homepage = "http://softwarebakery.com/maato/volumeicon.html";
+    platforms = pkgs.lib.platforms.linux;
+    maintainers = with maintainers; [ bobvanderlinden ];
+    license = pkgs.lib.licenses.gpl3;
+  };
+}
+```
+
+---
+
+## Archaic software <!-- .slide: class="fragmented-lists" -->
+
+<ul>
+<li class="fragment">MySQL 5.7.29</li>
+<li class="fragment">
+
+[No repository has this package](https://repology.org/project/mysql/versions)
+
+</li>
+</ul>
+
+<figure class="meme fragment">
+  <figcaption>Bail!</figcaption>
+  <img src="2022-11-19-15-19-46.png" height="300em">
+</figure>
+
+* ☝️ [Source code is available](https://github.com/mysql/mysql-server/tree/mysql-5.7.29)
+* 🥳 Nix is a programming language!
+
+---
+
+## Package overrides
+
+```nix [2|3|4-9|12]
 let
   mysql-5_7 = pkgs.mysql57.overrideAttrs (oldAttrs: rec {
     version = "5.7.29";
@@ -723,7 +771,9 @@ in mkShell {
 }
 ```
 
-https://github.com/mysql/mysql-server/tree/mysql-5.7.29
+---
+
+## The end<span class="fragment">?</span>
 
 ---
 
@@ -828,6 +878,8 @@ https://github.com/mysql/mysql-server/tree/mysql-5.7.29
   }
   ```
 
+---
+
 ## Nix language <!-- .slide: class="fragmented-lists" -->
 
 * Recursive attribute sets
@@ -836,5 +888,23 @@ https://github.com/mysql/mysql-server/tree/mysql-5.7.29
   rec {
     valueA = 3;
     valueB = valueA + 1;
+  }
+  ```
+
+* Inherit
+  
+  ```nix
+  {
+    inherit valueA valueB valueC;
+  }
+  ```
+
+  equals
+
+  ```nix
+  {
+    valueA = valueA;
+    valueB = valueB;
+    valueC = valueC;
   }
   ```

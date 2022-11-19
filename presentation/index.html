@@ -25,6 +25,35 @@
 		qrcode {
 			display: inline-block;
 		}
+
+		figure.meme {
+			position: relative;
+		}
+
+		figure.meme > figcaption {
+			position: absolute;
+			width: 100%;
+			bottom: 5px;
+			left: 50%;
+			transform: translateX(-50%);
+
+			font-family: Impact, sans-serif;
+			color: #fff;
+			text-shadow:
+				-2px -2px 0 #000,  
+				2px -2px 0 #000,
+				-2px 2px 0 #000,
+				2px 2px 0 #000;
+			text-transform: uppercase;
+			text-align: center;
+			font-size: 50px;
+		}
+
+		figure.meme > img {
+			border: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
   </style>
 </head>
 
