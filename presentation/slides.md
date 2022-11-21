@@ -353,7 +353,7 @@ v10.19.0
 ```console
 $ git init ~/projects/myproject
 $ cd $_
-$ nix flake init --template github:bobvanderlinden/templates#dev-shell
+$ nix flake init --template github:bobvanderlinden/templates#devShell
 ```
 
 ---
